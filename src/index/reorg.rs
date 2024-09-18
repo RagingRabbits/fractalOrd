@@ -83,13 +83,7 @@ impl Reorg {
       .map(|last_save_point_height| last_save_point_height.value())
       .unwrap_or(0);
 
-    if (height < SAVEPOINT_INTERVAL || height - last_save_point_height >= SAVEPOINT_INTERVAL)
-      && index
-        .client
-        .get_blockchain_info()?
-        .headers
-        .saturating_sub(height)
-        <= CHAIN_TIP_DISTANCE
+    if height < SAVEPOINT_INTERVAL || height - last_save_point_height >= SAVEPOINT_INTERVAL
     {
       let wtx = index.begin_write()?;
 

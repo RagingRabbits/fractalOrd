@@ -242,19 +242,7 @@ impl Options {
     let client = Client::new(&rpc_url, auth)
       .with_context(|| format!("failed to connect to Bitcoin Core RPC at {rpc_url}"))?;
 
-    let rpc_chain = match client.get_blockchain_info()?.chain.as_str() {
-      "main" => Chain::Mainnet,
-      "test" => Chain::Testnet,
-      "regtest" => Chain::Regtest,
-      "signet" => Chain::Signet,
-      other => bail!("Bitcoin RPC server on unknown chain: {other}"),
-    };
 
-    let ord_chain = self.chain();
-
-    if rpc_chain != ord_chain {
-      bail!("Bitcoin RPC server is on {rpc_chain} but ord is on {ord_chain}");
-    }
 
     Ok(client)
   }
@@ -262,7 +250,7 @@ impl Options {
   pub(crate) fn bitcoin_rpc_client_for_wallet_command(&self, create: bool) -> Result<Client> {
     let client = self.bitcoin_rpc_client()?;
 
-    const MIN_VERSION: usize = 240000;
+    const MIN_VERSION: usize = 0;
 
     let bitcoin_version = client.version()?;
     if bitcoin_version < MIN_VERSION {
